@@ -46,6 +46,7 @@ responce_time={}
 
         url_path = self.url.split('/')
         if re.match(r".+\.\w+", url_path[-1]):
+            # Find <file_name>.<extension>
             return True
         return False
 
@@ -114,6 +115,7 @@ def add_to_request_list(request, request_list, params):
 
     if params['ignore_www']:
         if re.match(r"www\.", request.url):
+            # Remove www. from url
             request.url = request.url[4:]
 
     if request.url not in request_list:
@@ -156,6 +158,7 @@ def parse(
 
     with open("log.log", 'r') as log_file:
         regular_exp = r'\[.*\] \".*\" \d+ \d+'
+        # Find correct requests in log file
         request_list = {}
 
         for line in log_file:
