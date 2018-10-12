@@ -4,7 +4,7 @@ and displays the top 5 URL path
 """
 
 import re
-import datetime
+from time import strptime
 from urllib.parse import urlparse
 
 
@@ -51,29 +51,13 @@ responce_time={}
         return False
 
 
-def make_datetime(datetimestring):
-    """
-    Creates an object of class datetime to string-based query
-    """
-
-    translator = {"Jan": 1, "Feb": 2, "Mar": 3, "Apr": 4,
-                  "May": 5, "Jun": 6, "Jul": 7, "Aug": 8,
-                  "Sep": 9, "Oct": 10, "Nov": 11, "Dec": 12}
-
-    date, time = datetimestring.split()
-    day, month, year = date.split('/')
-    hour, minute, second = time.split(':')
-    return datetime.datetime(int(year), translator[month], int(day),
-                             int(hour), int(minute), int(second))
-
-
 def parse_request(line):
     """
     The function parses the query string and returns an object of type Request
     """
 
     datetimestring = re.search(r"\[.*\]", line).group().strip('[]')
-    date_time = make_datetime(datetimestring)
+    date_time = strptime(datetimestring, "%d/%b/%Y %H:%M:%S")
 
     return Request(line, date_time)
 
@@ -92,11 +76,11 @@ def is_good_request(request, params):
             return False
 
     if params['start_at']:
-        if request.date_time < make_datetime(params['start_at']):
+        if request.date_time < strptime(params['start_at'], "%d/%b/%Y %H:%M:%S"):
             return False
 
     if params['stop_at']:
-        if request.date_time > make_datetime(params['stop_at']):
+        if request.date_time > strptime(params['stop_at'], "%d/%b/%Y %H:%M:%S"):
             return False
 
     if params['request_type']:
